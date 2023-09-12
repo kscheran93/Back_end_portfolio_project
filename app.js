@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const Product = require('./models/productModule');
 const app = express();
 
 app.use(express.json())
@@ -9,11 +10,25 @@ app.use(express.json())
 app.get('/', (req, res) => {
     res.send('api is in progress');
 })
-
-app.post('/product', (req, res) => {
-  console.log(req.body)
-  res.send(req.body);
+app.get('/products', async (req, res) => {
+    try {
+         const product = await Product.find({})
+         res.status(200).json(product);
+    } catch(err){
+        res.status(500).json({message: err.message});
+    }
 })
+
+app.post('/product', async(req, res) => {
+try {
+    const product = await Product.create(req.body)
+    res.status(200).json(product)
+} catch (err) {
+    console.log(err.message);
+    res.status(500).json({message: err.message});
+}
+})
+
 
 mongoose.connect('mongodb+srv://kscheran93:vasanthi9553@cluster0.qbevnnf.mongodb.net/node-API?retryWrites=true&w=majority').then(
     ()=>{
